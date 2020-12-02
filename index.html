@@ -1,0 +1,484 @@
+<!DOCTYPE html>
+<meta charset="utf-8">
+<head>
+    <link rel="stylesheet" type="text/css" href="styles.css" />
+    <link href="https://fonts.googleapis.com/css?family=Merriweather|Raleway|Inconsolata|Lato|Overpass+Mono|Staatliches" rel="stylesheet">
+
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>Largest remaining counties without a covid death</h1>
+            <h2>on <span id='date'></span></h2>
+        </div>
+        <div class="vizContainer">
+            <svg width="960" height="600"></svg>
+            <div class="legendContainer">
+                <table class="colorLegend">
+                    <tr>
+                        <td><span class='colorBlock death'></span></td>
+                        <td>County has at least one covid death</td>
+                    </tr>
+                    <tr>
+                        <td><span class='colorBlock noDeath'></span></td>
+                        <td>County has no covid deaths</td>
+                    </tr>
+                    <tr>
+                        <td><span class='colorBlock top10'></span></td>
+                        <td>County in 10 largest counties without a covid death</td>
+                    </tr>
+
+                </table>
+                <h2>10 largest counties without a covid death</h2>
+                <table class="countiesTable">
+                    <tr>
+                        <th class="name">County Name</th>
+                        <th class="population">Population</th>
+                    </tr>
+                </table>
+                <div class='footnotes'>
+                    ** NYC is combined into one county due to covid data constraints <br/>
+                </div>
+            </div>            
+        </div>
+        <div class='footer'>
+            <h4>
+                Data sources: population from the <a href='https://www.census.gov/data/tables/time-series/demo/popest/2010s-counties-total.html'>US census</a>, covid data from the <a href='https://github.com/nytimes/covid-19-data'>NYT covid data repository</a>. 
+            </h4>
+            <p>
+                Created by Nick Usoff, <a href='https://nickusoff.com'>nickusoff.com</a>.
+            </p> 
+        </div>
+    </div>
+    <script src="https://d3js.org/d3.v5.min.js"></script>
+    <script src="https://d3js.org/d3-scale-chromatic.v1.min.js"></script>
+    <script src="https://d3js.org/topojson.v2.min.js"></script>
+    <script>
+    const dates = {
+  "2020-02-27": true,
+  "2020-02-28": true,
+  "2020-02-29": true,
+  "2020-03-01": true,
+  "2020-03-02": true,
+  "2020-03-03": true,
+  "2020-03-04": true,
+  "2020-03-05": true,
+  "2020-03-06": true,
+  "2020-03-07": true,
+  "2020-03-08": true,
+  "2020-03-09": true,
+  "2020-03-10": true,
+  "2020-03-11": true,
+  "2020-03-12": true,
+  "2020-03-13": true,
+  "2020-03-14": true,
+  "2020-03-15": true,
+  "2020-03-16": true,
+  "2020-03-17": true,
+  "2020-03-18": true,
+  "2020-03-19": true,
+  "2020-03-20": true,
+  "2020-03-21": true,
+  "2020-03-22": true,
+  "2020-03-23": true,
+  "2020-03-24": true,
+  "2020-03-25": true,
+  "2020-03-26": true,
+  "2020-03-27": true,
+  "2020-03-28": true,
+  "2020-03-29": true,
+  "2020-03-30": true,
+  "2020-03-31": true,
+  "2020-04-01": true,
+  "2020-04-02": true,
+  "2020-04-03": true,
+  "2020-04-04": true,
+  "2020-04-05": true,
+  "2020-04-06": true,
+  "2020-04-07": true,
+  "2020-04-08": true,
+  "2020-04-09": true,
+  "2020-04-10": true,
+  "2020-04-11": true,
+  "2020-04-12": true,
+  "2020-04-13": true,
+  "2020-04-14": true,
+  "2020-04-15": true,
+  "2020-04-16": true,
+  "2020-04-17": true,
+  "2020-04-18": true,
+  "2020-04-19": true,
+  "2020-04-20": true,
+  "2020-04-21": true,
+  "2020-04-22": true,
+  "2020-04-23": true,
+  "2020-04-24": true,
+  "2020-04-25": true,
+  "2020-04-26": true,
+  "2020-04-27": true,
+  "2020-04-28": true,
+  "2020-04-29": true,
+  "2020-04-30": true,
+  "2020-05-01": true,
+  "2020-05-02": true,
+  "2020-05-03": true,
+  "2020-05-04": true,
+  "2020-05-05": true,
+  "2020-05-06": true,
+  "2020-05-07": true,
+  "2020-05-08": true,
+  "2020-05-09": true,
+  "2020-05-10": true,
+  "2020-05-11": true,
+  "2020-05-12": true,
+  "2020-05-13": true,
+  "2020-05-14": true,
+  "2020-05-15": true,
+  "2020-05-16": true,
+  "2020-05-17": true,
+  "2020-05-18": true,
+  "2020-05-19": true,
+  "2020-05-20": true,
+  "2020-05-21": true,
+  "2020-05-22": true,
+  "2020-05-23": true,
+  "2020-05-24": true,
+  "2020-05-25": true,
+  "2020-05-26": true,
+  "2020-05-27": true,
+  "2020-05-28": true,
+  "2020-05-29": true,
+  "2020-05-30": true,
+  "2020-05-31": true,
+  "2020-06-01": true,
+  "2020-06-02": true,
+  "2020-06-03": true,
+  "2020-06-04": true,
+  "2020-06-05": true,
+  "2020-06-06": true,
+  "2020-06-07": true,
+  "2020-06-08": true,
+  "2020-06-09": true,
+  "2020-06-10": true,
+  "2020-06-11": true,
+  "2020-06-12": true,
+  "2020-06-13": true,
+  "2020-06-14": true,
+  "2020-06-15": true,
+  "2020-06-16": true,
+  "2020-06-17": true,
+  "2020-06-18": true,
+  "2020-06-19": true,
+  "2020-06-20": true,
+  "2020-06-21": true,
+  "2020-06-22": true,
+  "2020-06-23": true,
+  "2020-06-24": true,
+  "2020-06-25": true,
+  "2020-06-26": true,
+  "2020-06-27": true,
+  "2020-06-28": true,
+  "2020-06-29": true,
+  "2020-06-30": true,
+  "2020-07-01": true,
+  "2020-07-02": true,
+  "2020-07-03": true,
+  "2020-07-04": true,
+  "2020-07-05": true,
+  "2020-07-06": true,
+  "2020-07-07": true,
+  "2020-07-08": true,
+  "2020-07-09": true,
+  "2020-07-10": true,
+  "2020-07-11": true,
+  "2020-07-12": true,
+  "2020-07-13": true,
+  "2020-07-14": true,
+  "2020-07-15": true,
+  "2020-07-16": true,
+  "2020-07-17": true,
+  "2020-07-18": true,
+  "2020-07-19": true,
+  "2020-07-20": true,
+  "2020-07-21": true,
+  "2020-07-22": true,
+  "2020-07-23": true,
+  "2020-07-24": true,
+  "2020-07-25": true,
+  "2020-07-26": true,
+  "2020-07-27": true,
+  "2020-07-28": true,
+  "2020-07-29": true,
+  "2020-07-30": true,
+  "2020-07-31": true,
+  "2020-08-01": true,
+  "2020-08-02": true,
+  "2020-08-03": true,
+  "2020-08-04": true,
+  "2020-08-05": true,
+  "2020-08-06": true,
+  "2020-08-07": true,
+  "2020-08-08": true,
+  "2020-08-09": true,
+  "2020-08-10": true,
+  "2020-08-11": true,
+  "2020-08-12": true,
+  "2020-08-13": true,
+  "2020-08-14": true,
+  "2020-08-15": true,
+  "2020-08-16": true,
+  "2020-08-17": true,
+  "2020-08-18": true,
+  "2020-08-19": true,
+  "2020-08-20": true,
+  "2020-08-21": true,
+  "2020-08-22": true,
+  "2020-08-23": true,
+  "2020-08-24": true,
+  "2020-08-25": true,
+  "2020-08-26": true,
+  "2020-08-27": true,
+  "2020-08-28": true,
+  "2020-08-29": true,
+  "2020-08-30": true,
+  "2020-08-31": true,
+  "2020-09-01": true,
+  "2020-09-02": true,
+  "2020-09-03": true,
+  "2020-09-04": true,
+  "2020-09-05": true,
+  "2020-09-06": true,
+  "2020-09-07": true,
+  "2020-09-08": true,
+  "2020-09-09": true,
+  "2020-09-10": true,
+  "2020-09-11": true,
+  "2020-09-12": true,
+  "2020-09-13": true,
+  "2020-09-14": true,
+  "2020-09-15": true,
+  "2020-09-16": true,
+  "2020-09-17": true,
+  "2020-09-18": true,
+  "2020-09-19": true,
+  "2020-09-20": true,
+  "2020-09-21": true,
+  "2020-09-22": true,
+  "2020-09-23": true,
+  "2020-09-24": true,
+  "2020-09-25": true,
+  "2020-09-26": true,
+  "2020-09-27": true,
+  "2020-09-28": true,
+  "2020-09-29": true,
+  "2020-09-30": true,
+  "2020-10-01": true,
+  "2020-10-02": true,
+  "2020-10-03": true,
+  "2020-10-04": true,
+  "2020-10-05": true,
+  "2020-10-06": true,
+  "2020-10-07": true,
+  "2020-10-08": true,
+  "2020-10-09": true,
+  "2020-10-10": true,
+  "2020-10-11": true,
+  "2020-10-12": true,
+  "2020-10-13": true,
+  "2020-10-14": true,
+  "2020-10-15": true,
+  "2020-10-16": true,
+  "2020-10-17": true,
+  "2020-10-18": true,
+  "2020-10-19": true,
+  "2020-10-20": true,
+  "2020-10-21": true,
+  "2020-10-22": true,
+  "2020-10-23": true,
+  "2020-10-24": true,
+  "2020-10-25": true,
+  "2020-10-26": true,
+  "2020-10-27": true,
+  "2020-10-28": true,
+  "2020-10-29": true,
+  "2020-10-30": true,
+  "2020-10-31": true,
+  "2020-11-01": true,
+  "2020-11-02": true,
+  "2020-11-03": true,
+  "2020-11-04": true,
+  "2020-11-05": true,
+  "2020-11-06": true,
+  "2020-11-07": true,
+  "2020-11-08": true,
+  "2020-11-09": true,
+  "2020-11-10": true,
+  "2020-11-11": true,
+  "2020-11-12": true,
+  "2020-11-13": true,
+  "2020-11-14": true,
+  "2020-11-15": true,
+  "2020-11-16": true,
+  "2020-11-17": true,
+  "2020-11-18": true,
+  "2020-11-19": true,
+  "2020-11-20": true,
+  "2020-11-21": true,
+  "2020-11-22": true,
+  "2020-11-23": true,
+  "2020-11-24": true,
+  "2020-11-25": true,
+  "2020-11-26": true,
+  "2020-11-27": true,
+  "2020-11-28": true,
+  "2020-11-29": true,
+  "2020-11-30": true,
+  "2020-12-01": true
+};
+    
+    var svg = d3.select("svg"),
+        width = +svg.attr("width"),
+        height = +svg.attr("height");
+        
+    var path = d3.geoPath();
+
+    function createName (county, state) {
+        let special = '';
+        if (county === 'New York City') {
+            special = '**';
+        } else if (state === 'Puerto Rico') {
+            special = '***';
+        }
+        return `${county}, ${state}${special}`;
+    }
+
+    // for posterity - this is how compressed data was created
+    function createCounties (deathData, popData) {
+        let counties = {};
+        let dates = {};
+        deathData.forEach((row) => {
+            dates[row.date] = true;
+            if (row.state === 'Puerto Rico') {
+                return;
+            }
+            if (!counties[row.fips]) {    
+                counties[row.fips] = {
+                    name: createName(row.county, row.state),
+                    deaths: {},
+                    fips: row.fips
+                }        
+            }
+            if (Number(row.deaths) !== 0) {
+                counties[row.fips].deaths[row.date] = true;
+            } 
+        });
+    
+        popData.forEach((county) => {
+            let fips = `${county.state}${county.county}`;
+            if (counties[fips]) {
+                counties[fips].population = Number(county.POP);
+            }
+        });
+        return [counties, dates];
+    }
+    
+    // var promises = [
+    //   d3.json("https://d3js.org/us-10m.v1.json"),
+    //   d3.csv("us-counties.csv"),
+    //   d3.csv('countiesDensity.csv')
+    // ];
+    var promises = [
+      d3.json("https://d3js.org/us-10m.v1.json"),
+      d3.json('compressedData')
+    ];
+    
+    
+    Promise.all(promises).then(ready);
+    
+    
+    // function ready([us, deathData, popData]) {
+    //     let [counties, dates] = createCounties(deathData, popData);
+    function ready([us, counties]) {
+        countiesList = Object.values(counties).filter((d) => d.population);
+        countiesList.sort((a, b) => {
+            return Number(b.population) - Number(a.population);
+        });
+        function colorForDate (d, date, largestTen) {
+            if (largestTen.indexOf(d.id) !== -1) {
+                return 'yellow';
+            }
+            if (counties[d.id]?.deaths[date]) {
+                return 'black'
+            }
+            return 'white';
+        }
+
+
+    
+        let g = svg.append("g")
+          .attr("class", "counties");
+        
+        function drawCounties (date, largestTen) {
+
+            let paths = g.selectAll("path")
+            .data(topojson.feature(us, us.objects.counties).features);
+            paths
+            .enter().append("path")
+            .merge(paths)
+            .attr("fill", function(d) { return colorForDate(d, date, largestTen.map(county => county.fips))})
+            .attr("d", path);
+            paths.exit().remove();
+        }
+        let day = 0;
+        let datesArray = Object.keys(dates).sort();
+    
+        function findLargestTen (date) {
+            return countiesList.filter((county) => {
+                return !county.deaths[date]
+            }).slice(0,10);
+        }
+    
+        setInterval(() => {
+            const date = datesArray[day];
+            let largestTen = findLargestTen(date);
+            drawCounties(date, largestTen);
+            d3.select('#date').node().innerHTML = new Date(date).toLocaleDateString();
+            let largestCounties = d3.select('.legendContainer').select('.countiesTable').selectAll('.largeCounty')
+                .data(largestTen);
+            largestCounties.enter().append('tr')
+                .classed('largeCounty', true)
+                .merge(largestCounties)
+                .each(function (d) {
+                    let nameCell = d3.select(this).selectAll('.name')
+                        .data([d]);
+                    nameCell.enter()
+                        .append('td')
+                        .classed('name', true)
+                        .merge(nameCell)
+                        .text(d => d.name);
+                    nameCell.exit().remove();
+
+                    let populationCell = d3.select(this).selectAll('.population')
+                        .data([d]);
+                    populationCell.enter()
+                        .append('td')
+                        .classed('population', true)
+                        .merge(populationCell)
+                        .text(d => Number(d.population).toLocaleString());
+                    populationCell.exit().remove();
+                })
+            largestCounties.exit().remove();
+            if (day < datesArray.length - 1) {
+                day++;
+            }
+        }, 250);
+    
+      svg.append("path")
+          .datum(topojson.mesh(us, us.objects.states, function(a, b) { return a !== b; }))
+          .attr("class", "states")
+          .attr("d", path);
+    }
+    
+    </script>
+
+</body>

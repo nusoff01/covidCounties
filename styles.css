@@ -1,0 +1,96 @@
+.container {
+    width: fit-content;   
+}
+.counties {
+    fill: none;
+    stroke: grey;
+  }
+  
+.states {
+    fill: none;
+    stroke: #fff;
+    stroke-linejoin: round;
+}
+
+body {
+    font-family: Raleway;
+}
+.container, .largestContainer {
+    margin: 0 auto;
+}
+
+.header {
+    text-align: center;
+    width: 100%;
+}
+.name {
+    min-width: 240px;
+}
+
+th {
+    text-align: left;
+}
+
+h1, h2 {
+    font-family: Merriweather;
+}
+
+h1 {
+    font-size: 40px;
+    margin-top: 48px;
+}
+
+h2 {
+    font-weight: lighter;
+}
+
+.vizContainer {
+    display: flex;
+    width: fit-content;
+    margin: 0 auto;
+    flex-direction: row;
+}
+
+.colorLegend {
+    margin-top: 108px;
+    margin-bottom: 64px;
+}
+.footnotes {
+    margin-top: 32px;
+    font-style: italic;
+    font-size: 12px;
+}
+.footer {
+    text-align: right;
+    margin-top: 60px;
+}
+.footer h4, .footer p {
+    margin: 4px;
+}
+#date {
+    font-style: italic;
+}
+.colorBlock {
+    width: 16px;
+    height: 16px;
+    display: block;
+    border: 1px solid black;
+    margin-right: 8px;
+}
+
+.noDeath {
+    background-color: white;
+}
+.death {
+    background-color: black;
+}
+.top10 {
+    background-color: yellow;
+}
+
+@media (max-width: 780px) {
+    .vizContainer {
+        flex-direction: column;
+    }
+
+}
